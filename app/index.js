@@ -3,7 +3,7 @@ const fs = require('fs');
 const opn = require('opn');
 const dust = require('dustjs-linkedin');
 
-const template = fs.readFileSync('issues.dust', 'utf8');
+const template = fs.readFileSync(process.cwd() + '/app/issues.dust', 'utf8');
 
 function rootify(str) {
   return str.replace(/-\w/g, (x)=> { return x.toUpperCase() })
@@ -11,12 +11,30 @@ function rootify(str) {
   .join('');
 }
 
+function parseIssueGraph(dataStr) {
+  const parsedData = JSON.parse(dataStr);
+  const repoKeys = Object.keys(parsedData.data.viewer);
+  let result;
+  let arryOfIssues = [];
+
+  repoKeys.forEach((key) => {
+    let nextArr = parsedData.data.viewer[key].issues.edges;
+    arryOfIssues = arryOfIssues.concat(nextArr);
+  });
+
+  result = arryOfIssues.map((el)=> {
+    el.issue.labels = el.issue.labels.edges;
+    return el.issue;
+  });
+
+  return { issues: result };
+}
+
 function handleResponse(res) {
   const htmlStart = '<html><body>';
   const htmlEnd = '</body></html>';
-  const parsed = JSON.parse(res);
-  const repoKeys = Object.keys(parsed.data.viewer);
-  let data = { "issues": parsed.data.viewer[repoKeys[0]].issues.edges.concat(parsed.data.viewer[repoKeys[1]].issues.edges)};
+  const resAsJson = res;
+  const data = parseIssueGraph(resAsJson);
 
   const compiled = dust.compile(template, 'template');
   dust.loadSource(compiled);
@@ -37,14 +55,17 @@ const repos = [
 
 const issuesQueryFrag = `issues(last: 100, states: OPEN) {
   edges {
-    node {
+    issue: node {
       id
       title
       createdAt
       number
+      repository {
+        name
+      }
       labels(last: 100) {
         edges {
-          node {
+          label: node {
             id
             name
             color
@@ -57,7 +78,7 @@ const issuesQueryFrag = `issues(last: 100, states: OPEN) {
 
 const query = repos.reduce((acc, el) => {
   let elRootKey = rootify(el);
-    
+  
   return acc + `${elRootKey}: repository(name: "${el}") {${issuesQueryFrag}},`
 }, '');
 
@@ -77,8 +98,6 @@ const options = {
 };
 
 const req = https.request(options, (res) => {
-  console.log(`STATUS: ${res.statusCode}`);
-  console.log(`HEADERS: ${JSON.stringify(res.headers)}`);
   res.setEncoding('utf8');
   let resBody = '';
 
@@ -87,8 +106,7 @@ const req = https.request(options, (res) => {
   });
 
   res.on('end', () => {
-    const result = handleResponse(resBody);
-    console.log(result);
+    handleResponse(resBody);
     console.log('No more data in response.');
   });
 });

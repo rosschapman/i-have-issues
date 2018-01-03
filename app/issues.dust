@@ -1,12 +1,13 @@
 <style>
-  
+  body {
+    font-family: Helvetica;
+  }
 </style>
-<ul>
+<h1>My Issues</h1>
+<ol>
   {#issues}
     <li>
-      {#node}
-        {title}
-      {/node}
+        {repository.name}: {title} [{#labels}<span style="background-color: {label.color}">{label.name}</span>{/labels}]
     </li>
   {/issues}
-</ul>
+</ol>
