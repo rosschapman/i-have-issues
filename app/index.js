@@ -50,7 +50,8 @@ function handleResponse(res) {
 
 const repos = [
   'if-ross-wrote-javascript',
-  'my-theory-of-dev'
+  'my-theory-of-dev',
+  'i-have-issues'
 ];
 
 const issuesQueryFrag = `issues(last: 100, states: OPEN) {
