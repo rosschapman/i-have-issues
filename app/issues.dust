@@ -1,0 +1,12 @@
+<style>
+  
+</style>
+<ul>
+  {#issues}
+    <li>
+      {#node}
+        {title}
+      {/node}
+    </li>
+  {/issues}
+</ul>
