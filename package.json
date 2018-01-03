@@ -1,0 +1,23 @@
+{
+  "name": "i-have-issues",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosschapman/i-have-issues.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rosschapman/i-have-issues/issues"
+  },
+  "homepage": "https://github.com/rosschapman/i-have-issues#readme",
+  "dependencies": {
+    "dustjs-linkedin": "^2.7.5",
+    "opn": "^5.1.0"
+  }
+}

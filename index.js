@@ -1,17 +1,40 @@
 const https = require('https');
-var open = require("open");
+const fs = require('fs');
+const opn = require('opn');
+const dust = require('dustjs-linkedin');
+
+const template = `<ul>{#issues}<li>{#node}{title}{/node}</li>{/issues}</ul>`
 
 function rootify(str) {
-  str.replace(/-\w/g, (x)=> { return x.toUpperCase() })
+  return str.replace(/-\w/g, (x)=> { return x.toUpperCase() })
   .split('-')
   .join('');
 }
 
+function handleResponse(res) {
+  const htmlStart = '<html><body>';
+  const htmlEnd = '</body></html>';
+  const parsed = JSON.parse(res);
+  const repoKeys = Object.keys(parsed.data.viewer);
+  let data = { "issues": parsed.data.viewer[repoKeys[0]].issues.edges.concat(parsed.data.viewer[repoKeys[1]].issues.edges)};
+
+  const compiled = dust.compile(template, 'template');
+  dust.loadSource(compiled);
+  dust.render('template', data, function(err, out) {
+    const html = htmlStart + out + htmlEnd;
+    fs.writeFile('issues.html', html, 'utf8', (err)=> {
+      if (err) throw err;
+      console.log('The file has been saved!');
+      opn('./issues.html', 'firefox');
+    });
+  });
+}
+
 const repos = [
-  'if-ross-wrote-javascript', 
-  'i-have-issues', 
+  'if-ross-wrote-javascript',
   'my-theory-of-dev'
 ];
+
 const issuesQueryFrag = `issues(last: 100, states: OPEN) {
   edges {
     node {
@@ -49,7 +72,7 @@ const options = {
   method: 'POST',
   headers: {
     Authorization: ` Bearer ${process.env.GITHUB_TOKEN}`,
-    'User-Agent': ' rosschapman@github'
+    'User-Agent': ' rosschapman'
   }
 };
 
@@ -64,7 +87,8 @@ const req = https.request(options, (res) => {
   });
 
   res.on('end', () => {
-    console.log(resBody)
+    const result = handleResponse(resBody);
+    console.log(result);
     console.log('No more data in response.');
   });
 });
