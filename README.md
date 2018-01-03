@@ -4,4 +4,6 @@ The best way to handle your issues is to write them down and realize the backlog
 
 _i-have-issues_ is part of my new side hustle ecosystem (see where it all began [here](https://medium.com/@internetross/my-first-side-hustle-project-for-no-money-but-skills-building-and-excuse-to-medium-a-goodreads-577244629208)) where I wrote code that solves already solved problems but I get to learn new things so I can maybe help solve less solved or unsolved problems in the future.   
 
-[![jfufpydxyonmnuroffmd](https://user-images.githubusercontent.com/5185/34533470-30435e4e-f06f-11e7-9cc3-995c25720bb4.gif)](http://1amstudios.com/2016/11/27/c64-slack-client/)
+#### Update 1/3/18: Looks like
+
+![mozilla_firefox_and_index_js_ _i-have-issues](https://user-images.githubusercontent.com/5185/34541854-c13fd17e-f08e-11e7-8ba3-25eb977d63c3.jpg)
